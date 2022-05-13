@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import './App.css';
+import Navbar from './components/Navbar';
+import Content from './components/Content';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> welcome.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          React application 
-        </a>
-      </header>
-    </div>
-  );
+import { loadWeb3, loadAccount, loadNetworkId } from './redux/interactions';
+import { contractsLoadedSelector } from './redux/selectors';
+
+
+class App extends Component {
+  componentDidMount() {
+    this.loadBlockchainData(this.props.dispatch)
+  }
+
+  async loadBlockchainData(dispatch) {
+
+    const web3 = loadWeb3(dispatch)
+    await web3.eth.net.getNetworkType()
+    const networkId = await loadNetworkId(web3, dispatch)
+    await loadAccount(web3, dispatch)
+    
+  }
+
+  render() {
+    return (
+      <div>
+        <Navbar />
+        {this.props.contracsLoaded ? <Content /> : <div className="content"></div>}
+      </div>
+    );
+  }
 }
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    contracsLoaded: contractsLoadedSelector(state)
+  }
+}
+export default connect(mapStateToProps)(App);
