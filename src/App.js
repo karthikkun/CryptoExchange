@@ -4,7 +4,7 @@ import './App.css';
 import Navbar from './components/Navbar';
 import Content from './components/Content';
 
-import { loadWeb3, loadAccount, loadNetworkId, loadToken, loadExchange } from './redux/interactions';
+import { loadWeb3, loadAccount, loadNetworkId, loadToken, loadExchange, loadAllOrders } from './redux/interactions';
 import { contractsLoadedSelector } from './redux/selectors';
 
 
@@ -20,7 +20,6 @@ class App extends Component {
     await web3.eth.net.getNetworkType()
     const networkId = await loadNetworkId(web3, dispatch)
     await loadAccount(web3, dispatch)
-    
     const token = await loadToken(web3, networkId, dispatch)
     if (!token) {
       window.alert('Token smart contract not deployed to the current network. Please select another network with Metamask.')
@@ -32,6 +31,7 @@ class App extends Component {
       window.alert('Exchange smart contract not deployed to the current network. Please select another network with Metamask.')
       return
     }
+    console.log(exchange)
   }
 
   render() {
